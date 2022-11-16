@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "id": "njols-hud",
+  "version": "${mod_version}",
+  "name": "Njol's HUD",
+  "description": "A new look for Minecraft's HUD",
+  "authors": [
+    "Njol"
+  ],
+  "contact": {
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/njols-hud",
+    "issues": "https://github.com/Njol/MCHUDMod/issues",
+    "sources": "https://github.com/Njol/MCHUDMod"
+  },
+  "license": "GPL-3.0",
+  "icon": "assets/njols-hud/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "ch.njol.minecraft.hudmod.HudMod"
+    ],
+    "main": [
+    ],
+    "modmenu": [
+      "ch.njol.minecraft.hudmod.options.ConfigMenu"
+    ]
+  },
+  "mixins": [
+    "njols-hud.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": ">=${fabric_version}",
+    "minecraft": "~${minecraft_version}"
+  },
+  "recommends": {
+    "modmenu": ">=3.2.3",
+    "cloth-config-fabric": ">=6.2.62"
+  },
+  "suggests": {
+    "citresewn": "*"
+  }
+}
