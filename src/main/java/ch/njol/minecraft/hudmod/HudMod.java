@@ -72,7 +72,13 @@ public class HudMod implements ClientModInitializer {
 		Hud.INSTANCE.addElement(heldItemTooltip);
 		Hud.INSTANCE.addElement(overlayMessage);
 
-		ConfigMenu.registerTypes();
+		try {
+			Class.forName("com.terraformersmc.modmenu.api.ModMenuApi");
+			Class.forName("me.shedaniel.clothconfig2.api.ConfigBuilder");
+			ConfigMenu.registerTypes();
+		} catch (ClassNotFoundException e) {
+			// ignore
+		}
 	}
 
 	public static void saveConfig() {
