@@ -31,7 +31,9 @@
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": ">=${fabric_version}",
-    "minecraft": "~${minecraft_version}"
+    "minecraft": "~${minecraft_version}",
+    "njols-config-framework": "^${config_framework_version}",
+    "njols-ui-framework": "^${ui_framework_version}"
   },
   "recommends": {
     "modmenu": ">=3.2.3",
