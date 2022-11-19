@@ -108,7 +108,8 @@ public class HudMod implements ClientModInitializer {
 		Pattern overlayPattern = Pattern.compile(Pattern.quote(fileNamePrefix) + "(\\d+).png$");
 		Optional<Collection<Identifier>> foundIcons =
 			MinecraftClient.getInstance().getResourceManager().streamResourcePacks()
-				.map(rp -> rp.findResources(ResourceType.CLIENT_RESOURCES, atlas.getNamespace(), "textures/" + atlas.getAtlasName() + "/" + subDirectory, 1, path -> overlayPattern.matcher(path).find()))
+				.map(rp -> rp.findResources(ResourceType.CLIENT_RESOURCES, atlas.getNamespace(), "textures/" + atlas.getAtlasName() + "/" + subDirectory,
+					path -> overlayPattern.matcher(path.getPath()).find()))
 				.filter(ids -> !ids.isEmpty())
 				.reduce((a, b) -> b);
 		if (foundIcons.isPresent()) {

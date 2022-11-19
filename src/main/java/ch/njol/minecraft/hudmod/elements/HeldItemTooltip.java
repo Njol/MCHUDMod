@@ -6,7 +6,7 @@ import ch.njol.minecraft.uiframework.ElementPosition;
 import ch.njol.minecraft.uiframework.hud.HudElement;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.LiteralTextContent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -37,7 +37,7 @@ public class HeldItemTooltip extends HudElement {
 		if (currentStack == null || currentStack.isEmpty()) {
 			return 0;
 		}
-		MutableText mutableText = new LiteralText("").append(currentStack.getName()).formatted(currentStack.getRarity().formatting);
+		MutableText mutableText = MutableText.of(new LiteralTextContent("")).append(currentStack.getName()).formatted(currentStack.getRarity().formatting);
 		if (currentStack.hasCustomName()) {
 			mutableText.formatted(Formatting.ITALIC);
 		}
