@@ -12,7 +12,7 @@ import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.tag.FluidTags;
+import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.util.Identifier;
 
 public class BreathBar extends HudElement {
@@ -50,7 +50,7 @@ public class BreathBar extends HudElement {
 	@Override
 	protected int getWidth() {
 		Sprite barSprite = HudMod.HUD_ATLAS.getSprite(BREATH);
-		return 2 * MARGIN + (int) (1.0 * barSprite.getWidth() * HEIGHT / barSprite.getHeight());
+		return 2 * MARGIN + (int) (1.0 * barSprite.getContents().getWidth() * HEIGHT / barSprite.getContents().getHeight());
 	}
 
 	@Override

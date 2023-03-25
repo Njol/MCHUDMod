@@ -1,0 +1,10 @@
+{
+  "sources": [
+    {
+      "type": "namespace",
+      "source": "hud",
+      "prefix": "",
+      "namespace": "njols-hud"
+    }
+  ]
+}

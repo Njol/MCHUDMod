@@ -52,7 +52,7 @@ public class HungerBar extends HudElement {
 	@Override
 	protected int getWidth() {
 		Sprite barSprite = HudMod.HUD_ATLAS.getSprite(BAR_HUNGER);
-		return 2 * MARGIN + (int) (1.0 * barSprite.getWidth() * HEIGHT / barSprite.getHeight());
+		return 2 * MARGIN + (int) (1.0 * barSprite.getContents().getWidth() * HEIGHT / barSprite.getContents().getHeight());
 	}
 
 	@Override

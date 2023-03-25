@@ -14,9 +14,9 @@ import ch.njol.minecraft.uiframework.hud.Hud;
 import com.google.gson.JsonParseException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NavigableMap;
-import java.util.Optional;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -105,23 +105,25 @@ public class HudMod implements ClientModInitializer {
 
 	public static NavigableMap<Integer, Identifier> findLevelledSprites(ModSpriteAtlasHolder atlas, String subDirectory, String fileNamePrefix) {
 		NavigableMap<Integer, Identifier> map = new TreeMap<>();
-		Pattern overlayPattern = Pattern.compile(Pattern.quote(fileNamePrefix) + "(\\d+).png$");
-		Optional<Collection<Identifier>> foundIcons =
-			MinecraftClient.getInstance().getResourceManager().streamResourcePacks()
-				.map(rp -> rp.findResources(ResourceType.CLIENT_RESOURCES, atlas.getNamespace(), "textures/" + atlas.getAtlasName() + "/" + subDirectory,
-					path -> overlayPattern.matcher(path.getPath()).find()))
-				.filter(ids -> !ids.isEmpty())
-				.reduce((a, b) -> b);
-		if (foundIcons.isPresent()) {
-			for (Identifier foundIcon : foundIcons.get()) {
-				Matcher m = overlayPattern.matcher(foundIcon.getPath());
-				if (!m.find()) {
-					continue;
-				}
-				int level = Integer.parseInt(m.group(1));
-				Identifier identifier = atlas.registerSprite(foundIcon.getPath().substring("textures//".length() + atlas.getAtlasName().length(), foundIcon.getPath().length() - ".png".length()));
-				map.put(level, identifier);
+		Pattern overlayPattern = Pattern.compile(Pattern.quote(fileNamePrefix) + "(\\d+)\\.png$");
+		List<Identifier> foundIcons = new ArrayList<>();
+		MinecraftClient.getInstance().getResourceManager().streamResourcePacks()
+			.forEach(rp -> rp.findResources(ResourceType.CLIENT_RESOURCES, atlas.getNamespace(), "textures/" + atlas.getAtlasName() + "/" + subDirectory,
+				(path, supplier) -> {
+					if (overlayPattern.matcher(path.getPath()).find()) {
+						foundIcons.add(path);
+					}
+				}));
+//				.filter(ids -> !ids.isEmpty())
+//				.reduce((a, b) -> b);
+		for (Identifier foundIcon : foundIcons) {
+			Matcher m = overlayPattern.matcher(foundIcon.getPath());
+			if (!m.find()) {
+				continue;
 			}
+			int level = Integer.parseInt(m.group(1));
+			Identifier identifier = atlas.registerSprite(foundIcon.getPath().substring("textures//".length() + atlas.getAtlasName().length(), foundIcon.getPath().length() - ".png".length()));
+			map.put(level, identifier);
 		}
 		return map;
 	}

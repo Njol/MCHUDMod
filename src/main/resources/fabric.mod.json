@@ -36,8 +36,8 @@
     "njols-ui-framework": "^${ui_framework_version}"
   },
   "recommends": {
-    "modmenu": ">=3.2.3",
-    "cloth-config-fabric": ">=6.2.62"
+    "modmenu": ">=5.0.2",
+    "cloth-config-fabric": ">=9.0.94"
   },
   "suggests": {
     "citresewn": "*"

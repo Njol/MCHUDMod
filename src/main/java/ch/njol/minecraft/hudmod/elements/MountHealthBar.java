@@ -46,7 +46,7 @@ public class MountHealthBar extends HudElement {
 	@Override
 	protected int getWidth() {
 		Sprite barSprite = HudMod.HUD_ATLAS.getSprite(HEALTH_BAR);
-		return 2 * MARGIN + (int) (1.0 * barSprite.getWidth() * HEIGHT / barSprite.getHeight());
+		return 2 * MARGIN + (int) (1.0 * barSprite.getContents().getWidth() * HEIGHT / barSprite.getContents().getHeight());
 	}
 
 	@Override

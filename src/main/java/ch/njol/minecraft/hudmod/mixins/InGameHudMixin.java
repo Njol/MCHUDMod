@@ -97,10 +97,10 @@ public class InGameHudMixin {
 	}
 
 	@Redirect(method = "render(Lnet/minecraft/client/util/math/MatrixStack;F)V",
-		at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;translate(DDD)V"),
+		at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;translate(FFF)V"),
 		slice = @Slice(from = @At(value = "FIELD", target = "Lnet/minecraft/client/gui/hud/InGameHud;overlayMessage:Lnet/minecraft/text/Text;", ordinal = 0),
 			to = @At(value = "FIELD", target = "Lnet/minecraft/client/gui/hud/InGameHud;overlayMessage:Lnet/minecraft/text/Text;", ordinal = 1)))
-	void render_overlayMessage_translate(MatrixStack instance, double x, double y, double z) {
+	void render_overlayMessage_translate(MatrixStack instance, float x, float y, float z) {
 		if (!HudMod.options.hud_enabled
 			    || !HudMod.options.hud_moveOverlayMessage) {
 			instance.translate(x, y, z);
