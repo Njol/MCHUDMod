@@ -23,7 +23,7 @@ public class HeldItemTooltip extends HudElement {
 	@Override
 	protected boolean isEnabled() {
 		return HudMod.options.hud_enabled && HudMod.options.hud_moveHeldItemTooltip
-			       && client.options.heldItemTooltips && this.client.interactionManager.getCurrentGameMode() != GameMode.SPECTATOR; // these two are vanilla check
+			       && this.client.interactionManager.getCurrentGameMode() != GameMode.SPECTATOR; // these two are vanilla check
 	}
 
 	@Override
