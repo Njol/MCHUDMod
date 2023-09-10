@@ -23,14 +23,14 @@ dependencies {
     // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    modApi "com.terraformersmc:modmenu:5.0.2"
-    modApi("me.shedaniel.cloth:cloth-config-fabric:9.0.94") {
+    modApi "com.terraformersmc:modmenu:6.3.1"
+    modApi("me.shedaniel.cloth:cloth-config-fabric:10.1.105") {
         exclude(group: "net.fabricmc.fabric-api")
     }
-    modApi "ch.njol.minecraft:ui-framework-mc1_19_3:${project.ui_framework_version}"
-    include "ch.njol.minecraft:ui-framework-mc1_19_3:${project.ui_framework_version}"
-    modApi "ch.njol.minecraft:config-framework-mc1_19:${project.config_framework_version}"
-    include "ch.njol.minecraft:config-framework-mc1_19:${project.config_framework_version}"
+    modApi "ch.njol.minecraft:ui-framework-mc1_19_4:${project.ui_framework_version}"
+    include "ch.njol.minecraft:ui-framework-mc1_19_4:${project.ui_framework_version}"
+    modApi "ch.njol.minecraft:config-framework-mc1_19_4:${project.config_framework_version}"
+    include "ch.njol.minecraft:config-framework-mc1_19_4:${project.config_framework_version}"
 }
 repositories {
     mavenLocal()
@@ -98,7 +98,7 @@ publishing {
 }
 
 def changeLog = '''
-
+Fixed config screen not working
 '''
 
 modrinth {
