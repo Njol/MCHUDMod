@@ -106,16 +106,22 @@ public class HudMod implements ClientModInitializer {
 	public static NavigableMap<Integer, Identifier> findLevelledSprites(ModSpriteAtlasHolder atlas, String subDirectory, String fileNamePrefix) {
 		NavigableMap<Integer, Identifier> map = new TreeMap<>();
 		Pattern overlayPattern = Pattern.compile(Pattern.quote(fileNamePrefix) + "(\\d+)\\.png$");
-		List<Identifier> foundIcons = new ArrayList<>();
-		MinecraftClient.getInstance().getResourceManager().streamResourcePacks()
-			.forEach(rp -> rp.findResources(ResourceType.CLIENT_RESOURCES, atlas.getNamespace(), "textures/" + atlas.getAtlasName() + "/" + subDirectory,
-				(path, supplier) -> {
-					if (overlayPattern.matcher(path.getPath()).find()) {
-						foundIcons.add(path);
-					}
-				}));
-//				.filter(ids -> !ids.isEmpty())
-//				.reduce((a, b) -> b);
+
+		List<Identifier> foundIcons =
+			MinecraftClient.getInstance().getResourceManager().streamResourcePacks()
+				.map(rp -> {
+					List<Identifier> rpIcons = new ArrayList<>();
+					rp.findResources(ResourceType.CLIENT_RESOURCES, atlas.getNamespace(), "textures/" + atlas.getAtlasName() + "/" + subDirectory,
+						(path, supplier) -> {
+							if (overlayPattern.matcher(path.getPath()).find()) {
+								rpIcons.add(path);
+							}
+						});
+					return rpIcons;
+				})
+				.filter(ids -> !ids.isEmpty())
+				.reduce((a, b) -> b)
+				.orElse(List.of());
 		for (Identifier foundIcon : foundIcons) {
 			Matcher m = overlayPattern.matcher(foundIcon.getPath());
 			if (!m.find()) {
