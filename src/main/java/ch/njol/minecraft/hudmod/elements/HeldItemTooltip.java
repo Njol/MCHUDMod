@@ -4,12 +4,9 @@ import ch.njol.minecraft.hudmod.HudMod;
 import ch.njol.minecraft.hudmod.mixins.InGameHudAccessor;
 import ch.njol.minecraft.uiframework.ElementPosition;
 import ch.njol.minecraft.uiframework.hud.HudElement;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.text.LiteralTextContent;
-import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import net.minecraft.world.GameMode;
 
 public class HeldItemTooltip extends HudElement {
@@ -37,11 +34,7 @@ public class HeldItemTooltip extends HudElement {
 		if (currentStack == null || currentStack.isEmpty()) {
 			return 0;
 		}
-		MutableText mutableText = MutableText.of(new LiteralTextContent("")).append(currentStack.getName()).formatted(currentStack.getRarity().formatting);
-		if (currentStack.hasCustomName()) {
-			mutableText.formatted(Formatting.ITALIC);
-		}
-		return client.textRenderer.getWidth(mutableText);
+		return client.textRenderer.getWidth(currentStack.toHoverableText());
 	}
 
 	@Override
@@ -60,7 +53,7 @@ public class HeldItemTooltip extends HudElement {
 	}
 
 	@Override
-	protected void render(MatrixStack matrices, float tickDelta) {
+	protected void render(DrawContext drawContext, float tickDelta) {
 		// nothing to do - rendered by (modified) vanilla code
 	}
 

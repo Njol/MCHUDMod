@@ -4,7 +4,7 @@ import ch.njol.minecraft.hudmod.HudMod;
 import ch.njol.minecraft.hudmod.mixins.InGameHudAccessor;
 import ch.njol.minecraft.uiframework.ElementPosition;
 import ch.njol.minecraft.uiframework.hud.HudElement;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 
 public class OverlayMessage extends HudElement {
@@ -47,7 +47,7 @@ public class OverlayMessage extends HudElement {
 	}
 
 	@Override
-	protected void render(MatrixStack matrices, float tickDelta) {
+	protected void render(DrawContext context, float tickDelta) {
 		// nothing to do - rendered by (modified) vanilla code
 	}
 

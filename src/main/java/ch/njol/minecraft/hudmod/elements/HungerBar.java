@@ -8,8 +8,8 @@ import ch.njol.minecraft.uiframework.hud.HudElement;
 import com.mojang.blaze3d.systems.RenderSystem;
 import java.util.Map;
 import java.util.NavigableMap;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.texture.Sprite;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
@@ -79,7 +79,7 @@ public class HungerBar extends HudElement {
 
 
 	@Override
-	protected void render(MatrixStack matrices, float tickDelta) {
+	protected void render(DrawContext context, float tickDelta) {
 
 		PlayerEntity player = getCameraPlayer();
 		if (player == null) {
@@ -90,13 +90,13 @@ public class HungerBar extends HudElement {
 		int barWidth = width - 2 * MARGIN;
 
 		if (HudMod.options.hud_hungerMirror) {
-			matrices.push();
-			matrices.translate(width, 0, 0);
-			matrices.scale(-1, 1, 1);
+			context.getMatrices().push();
+			context.getMatrices().translate(width, 0, 0);
+			context.getMatrices().scale(-1, 1, 1);
 			RenderSystem.disableCull();
 		}
 
-		drawSprite(matrices, HudMod.HUD_ATLAS.getSprite(BACKGROUND), 0, 0, width, HEIGHT);
+		drawSprite(context, HudMod.HUD_ATLAS.getSprite(BACKGROUND), 0, 0, width, HEIGHT);
 
 		int hunger = Utils.clamp(0, player.getHungerManager().getFoodLevel(), 20);
 		float saturation = Utils.clamp(0, player.getHungerManager().getSaturationLevel(), 20);
@@ -105,22 +105,22 @@ public class HungerBar extends HudElement {
 		easedSaturation = Utils.clamp(0, easedSaturation < 0 ? saturation : Utils.ease(saturation, easedSaturation, 6 * lastFrameDuration, 6 * lastFrameDuration), 20);
 
 		boolean hasDecay = player.hasStatusEffect(StatusEffects.HUNGER);
-		drawPartialSprite(matrices, HudMod.HUD_ATLAS.getSprite(hasDecay ? BAR_DECAY : BAR_HUNGER),
+		drawPartialSprite(context, HudMod.HUD_ATLAS.getSprite(hasDecay ? BAR_DECAY : BAR_HUNGER),
 			MARGIN, 0, barWidth, HEIGHT,
 			0, 0, easedHunger / 20, 1);
-		drawPartialSprite(matrices, HudMod.HUD_ATLAS.getSprite(BAR_SATURATION),
+		drawPartialSprite(context, HudMod.HUD_ATLAS.getSprite(BAR_SATURATION),
 			MARGIN, 0, barWidth, HEIGHT,
 			0, 0, easedSaturation / 20, 1);
 
-		drawSprite(matrices, HudMod.HUD_ATLAS.getSprite(hasDecay ? OVERLAY_DECAY : OVERLAY), 0, 0, width, HEIGHT);
+		drawSprite(context, HudMod.HUD_ATLAS.getSprite(hasDecay ? OVERLAY_DECAY : OVERLAY), 0, 0, width, HEIGHT);
 
 		Map.Entry<Integer, Identifier> levelOverlay = (hasDecay ? LEVEL_OVERLAYS_DECAY : LEVEL_OVERLAYS).floorEntry(hunger);
 		if (levelOverlay != null) {
-			drawSprite(matrices, HudMod.HUD_ATLAS.getSprite(levelOverlay.getValue()), 0, 0, width, HEIGHT);
+			drawSprite(context, HudMod.HUD_ATLAS.getSprite(levelOverlay.getValue()), 0, 0, width, HEIGHT);
 		}
 
 		if (easedSaturation > 0) {
-			drawSprite(matrices, HudMod.HUD_ATLAS.getSprite(OVERLAY_SATURATION), 0, 0, width, HEIGHT);
+			drawSprite(context, HudMod.HUD_ATLAS.getSprite(OVERLAY_SATURATION), 0, 0, width, HEIGHT);
 		}
 
 //		// TODO text options: no text at all, with saturation, current as % (with or without saturation)
@@ -128,7 +128,7 @@ public class HungerBar extends HudElement {
 //		drawOutlinedText(matrices, fullText, width / 2 - client.textRenderer.getWidth(fullText) / 2, HEIGHT / 2 - client.textRenderer.fontHeight / 2 + HudMod.options.hud_hungerTextOffset, 0xFFFFFFFF);
 
 		if (HudMod.options.hud_hungerMirror) {
-			matrices.pop();
+			context.getMatrices().pop();
 			RenderSystem.enableCull();
 		}
 	}

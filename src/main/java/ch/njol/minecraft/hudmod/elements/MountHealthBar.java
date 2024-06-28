@@ -7,8 +7,8 @@ import ch.njol.minecraft.uiframework.Utils;
 import ch.njol.minecraft.uiframework.hud.HudElement;
 import com.mojang.blaze3d.systems.RenderSystem;
 import java.text.DecimalFormat;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.texture.Sprite;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
@@ -75,7 +75,7 @@ public class MountHealthBar extends HudElement {
 	private float easedHealth = -1;
 
 	@Override
-	protected void render(MatrixStack matrices, float tickDelta) {
+	protected void render(DrawContext context, float tickDelta) {
 
 		LivingEntity mount = getMount();
 		if (mount == null && !isInEditMode()) {
@@ -87,33 +87,33 @@ public class MountHealthBar extends HudElement {
 		int healthWidth = width - 2 * MARGIN;
 
 		if (HudMod.options.hud_mountHealthMirror) {
-			matrices.push();
-			matrices.translate(width, 0, 0);
-			matrices.scale(-1, 1, 1);
+			context.getMatrices().push();
+			context.getMatrices().translate(width, 0, 0);
+			context.getMatrices().scale(-1, 1, 1);
 			RenderSystem.disableCull();
 		}
 
-		drawSprite(matrices, HudMod.HUD_ATLAS.getSprite(BACKGROUND), 0, 0, width, HEIGHT);
+		drawSprite(context, HudMod.HUD_ATLAS.getSprite(BACKGROUND), 0, 0, width, HEIGHT);
 
 		float maxHealth = Math.max(1.0f, mount != null ? mount.getMaxHealth() : 20);
 		float health = Utils.clamp(0, mount != null ? mount.getHealth() : 20, maxHealth);
 		float lastFrameDuration = client.getLastFrameDuration() / 20;
 		easedHealth = Utils.clamp(0, easedHealth <= 0 ? health : Utils.ease(health, easedHealth, 6 * lastFrameDuration, maxHealth / 3 * lastFrameDuration), maxHealth);
 
-		drawPartialSprite(matrices, HudMod.HUD_ATLAS.getSprite(HEALTH_BAR),
+		drawPartialSprite(context, HudMod.HUD_ATLAS.getSprite(HEALTH_BAR),
 			MARGIN, 0, healthWidth, HEIGHT,
 			0, 0, easedHealth / maxHealth, 1);
 
-		drawSprite(matrices, HudMod.HUD_ATLAS.getSprite(OVERLAY), 0, 0, width, HEIGHT);
+		drawSprite(context, HudMod.HUD_ATLAS.getSprite(OVERLAY), 0, 0, width, HEIGHT);
 
 		if (HudMod.options.hud_mountHealthMirror) {
-			matrices.pop();
+			context.getMatrices().pop();
 			RenderSystem.enableCull();
 		}
 
 		if (HudMod.options.hud_mountHealthText) {
 			String fullText = OPTIONAL_SINGLE_DIGIT.format(health);
-			drawOutlinedText(matrices, fullText, width / 2 - client.textRenderer.getWidth(fullText) / 2, HEIGHT / 2 - client.textRenderer.fontHeight / 2 + HudMod.options.hud_mountHealthTextOffset, 0xFFFFFFFF);
+			drawOutlinedText(context, fullText, width / 2 - client.textRenderer.getWidth(fullText) / 2, HEIGHT / 2 - client.textRenderer.fontHeight / 2 + HudMod.options.hud_mountHealthTextOffset, 0xFFFFFFFF);
 		}
 	}
 

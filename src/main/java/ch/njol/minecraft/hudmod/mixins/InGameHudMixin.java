@@ -3,6 +3,7 @@ package ch.njol.minecraft.hudmod.mixins;
 import ch.njol.minecraft.hudmod.HudMod;
 import java.awt.Rectangle;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
@@ -14,7 +15,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(InGameHud.class)
@@ -29,9 +29,9 @@ public class InGameHudMixin {
 	@Unique
 	private float tickDelta;
 
-	@Inject(method = "render(Lnet/minecraft/client/util/math/MatrixStack;F)V",
+	@Inject(method = "render(Lnet/minecraft/client/gui/DrawContext;F)V",
 		at = @At(value = "HEAD"))
-	void render_head(MatrixStack matrices, float tickDelta, CallbackInfo ci) {
+	void render_head(DrawContext context, float tickDelta, CallbackInfo ci) {
 		this.tickDelta = tickDelta;
 	}
 
@@ -47,32 +47,32 @@ public class InGameHudMixin {
 
 	// TODO mount jump bar? (in vanilla, it replaces the xp bar)
 
-	@Inject(method = "renderStatusBars(Lnet/minecraft/client/util/math/MatrixStack;)V",
+	@Inject(method = "renderStatusBars(Lnet/minecraft/client/gui/DrawContext;)V",
 		at = @At(value = "HEAD"), cancellable = true)
-	void renderStatusBars(MatrixStack matrices, CallbackInfo ci) {
+	void renderStatusBars(DrawContext context, CallbackInfo ci) {
 		if (HudMod.options.hud_enabled
 			    && HudMod.options.hud_statusBarsEnabled) {
-			HudMod.healthBar.renderAbsolute(matrices, tickDelta);
-			HudMod.hungerBar.renderAbsolute(matrices, tickDelta);
-			HudMod.breathBar.renderAbsolute(matrices, tickDelta);
+			HudMod.healthBar.renderAbsolute(context, tickDelta);
+			HudMod.hungerBar.renderAbsolute(context, tickDelta);
+			HudMod.breathBar.renderAbsolute(context, tickDelta);
 			// armor is useless in Monumenta, so no HUD element for that // TODO make one anyway? even in vanilla it doesn't really matter though
 			ci.cancel();
 		}
 	}
 
-	@Inject(method = "renderMountHealth(Lnet/minecraft/client/util/math/MatrixStack;)V",
+	@Inject(method = "renderMountHealth(Lnet/minecraft/client/gui/DrawContext;)V",
 		at = @At(value = "HEAD"), cancellable = true)
-	void renderMountHealth(MatrixStack matrices, CallbackInfo ci) {
+	void renderMountHealth(DrawContext context, CallbackInfo ci) {
 		if (HudMod.options.hud_enabled
 			    && HudMod.options.hud_mountHealthEnabled) {
-			HudMod.mountHealthBar.renderAbsolute(matrices, tickDelta);
+			HudMod.mountHealthBar.renderAbsolute(context, tickDelta);
 			ci.cancel();
 		}
 	}
 
-	@Inject(method = "renderHeldItemTooltip(Lnet/minecraft/client/util/math/MatrixStack;)V",
+	@Inject(method = "renderHeldItemTooltip(Lnet/minecraft/client/gui/DrawContext;)V",
 		at = @At(value = "HEAD"))
-	void renderHeldItemTooltip_head(MatrixStack matrices, CallbackInfo ci) {
+	void renderHeldItemTooltip_head(DrawContext context, CallbackInfo ci) {
 		if (HudMod.options.hud_enabled
 			    && HudMod.options.hud_moveHeldItemTooltip) {
 			Rectangle position = HudMod.heldItemTooltip.getDimension();
@@ -82,24 +82,23 @@ public class InGameHudMixin {
 			if (!this.client.interactionManager.hasStatusBars()) {
 				y += 14;
 			}
-			matrices.push();
-			matrices.translate(position.x - x, position.y - y, 0);
+			context.getMatrices().push();
+			context.getMatrices().translate(position.x - x, position.y - y, 0);
 		}
 	}
 
-	@Inject(method = "renderHeldItemTooltip(Lnet/minecraft/client/util/math/MatrixStack;)V",
+	@Inject(method = "renderHeldItemTooltip(Lnet/minecraft/client/gui/DrawContext;)V",
 		at = @At(value = "RETURN"))
-	void renderHeldItemTooltip_return(MatrixStack matrices, CallbackInfo ci) {
+	void renderHeldItemTooltip_return(DrawContext context, CallbackInfo ci) {
 		if (HudMod.options.hud_enabled
 			    && HudMod.options.hud_moveHeldItemTooltip) {
-			matrices.pop();
+			context.getMatrices().pop();
 		}
 	}
 
-	@Redirect(method = "render(Lnet/minecraft/client/util/math/MatrixStack;F)V",
+	@Redirect(method = "renderOverlayMessage(Lnet/minecraft/client/gui/DrawContext;F)V",
 		at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;translate(FFF)V"),
-		slice = @Slice(from = @At(value = "FIELD", target = "Lnet/minecraft/client/gui/hud/InGameHud;overlayMessage:Lnet/minecraft/text/Text;", ordinal = 0),
-			to = @At(value = "FIELD", target = "Lnet/minecraft/client/gui/hud/InGameHud;overlayMessage:Lnet/minecraft/text/Text;", ordinal = 1)))
+		allow = 1)
 	void render_overlayMessage_translate(MatrixStack instance, float x, float y, float z) {
 		if (!HudMod.options.hud_enabled
 			    || !HudMod.options.hud_moveOverlayMessage) {

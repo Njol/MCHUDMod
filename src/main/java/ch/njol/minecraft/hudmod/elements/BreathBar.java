@@ -8,6 +8,7 @@ import ch.njol.minecraft.uiframework.hud.HudElement;
 import com.mojang.blaze3d.systems.RenderSystem;
 import java.util.Map;
 import java.util.NavigableMap;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.effect.StatusEffects;
@@ -75,12 +76,14 @@ public class BreathBar extends HudElement {
 	private float easedAir = -1;
 
 	@Override
-	protected void render(MatrixStack matrices, float tickDelta) {
+	protected void render(DrawContext context, float tickDelta) {
 
 		PlayerEntity player = getCameraPlayer();
 		if (player == null) {
 			return;
 		}
+
+		MatrixStack matrices = context.getMatrices();
 
 		int width = getWidth();
 		int barWidth = width - 2 * MARGIN;
@@ -92,22 +95,22 @@ public class BreathBar extends HudElement {
 			RenderSystem.disableCull();
 		}
 
-		drawSprite(matrices, HudMod.HUD_ATLAS.getSprite(BACKGROUND), 0, 0, width, HEIGHT);
+		drawSprite(context, HudMod.HUD_ATLAS.getSprite(BACKGROUND), 0, 0, width, HEIGHT);
 
 		int air = Utils.clamp(0, player.getAir(), player.getMaxAir());
 		float lastFrameDuration = client.getLastFrameDuration() / 20;
 		easedAir = Utils.clamp(0, easedAir < 0 ? air : Utils.ease(air, easedAir, 6 * lastFrameDuration, 6 * lastFrameDuration), player.getMaxAir());
 
 		boolean hasWaterBreathing = player.hasStatusEffect(StatusEffects.WATER_BREATHING);
-		drawPartialSprite(matrices, HudMod.HUD_ATLAS.getSprite(hasWaterBreathing ? WATER_BREATHING : BREATH),
+		drawPartialSprite(context, HudMod.HUD_ATLAS.getSprite(hasWaterBreathing ? WATER_BREATHING : BREATH),
 			MARGIN, 0, barWidth, HEIGHT,
 			0, 0, 1f * air / player.getMaxAir(), 1);
 
-		drawSprite(matrices, HudMod.HUD_ATLAS.getSprite(OVERLAY), 0, 0, width, HEIGHT);
+		drawSprite(context, HudMod.HUD_ATLAS.getSprite(OVERLAY), 0, 0, width, HEIGHT);
 
 		Map.Entry<Integer, Identifier> levelOverlay = LEVEL_OVERLAYS.floorEntry(air);
 		if (levelOverlay != null) {
-			drawSprite(matrices, HudMod.HUD_ATLAS.getSprite(levelOverlay.getValue()), 0, 0, width, HEIGHT);
+			drawSprite(context, HudMod.HUD_ATLAS.getSprite(levelOverlay.getValue()), 0, 0, width, HEIGHT);
 		}
 
 		if (HudMod.options.hud_breathMirror) {
