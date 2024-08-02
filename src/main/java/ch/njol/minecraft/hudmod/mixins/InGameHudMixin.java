@@ -15,6 +15,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(InGameHud.class)
@@ -96,8 +97,10 @@ public class InGameHudMixin {
 		}
 	}
 
-	@Redirect(method = "renderOverlayMessage(Lnet/minecraft/client/gui/DrawContext;F)V",
+	@Redirect(method = "render(Lnet/minecraft/client/gui/DrawContext;F)V",
 		at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;translate(FFF)V"),
+		slice = @Slice(from = @At(value = "FIELD", target = "Lnet/minecraft/client/gui/hud/InGameHud;overlayMessage:Lnet/minecraft/text/Text;", ordinal = 0),
+			to = @At(value = "FIELD", target = "Lnet/minecraft/client/gui/hud/InGameHud;overlayMessage:Lnet/minecraft/text/Text;", ordinal = 1)),
 		allow = 1)
 	void render_overlayMessage_translate(MatrixStack instance, float x, float y, float z) {
 		if (!HudMod.options.hud_enabled

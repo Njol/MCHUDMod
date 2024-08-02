@@ -4,7 +4,6 @@ import ch.njol.minecraft.hudmod.elements.HeldItemTooltip;
 import ch.njol.minecraft.hudmod.elements.OverlayMessage;
 import ch.njol.minecraft.uiframework.hud.HudEditScreen;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.text.Text;
@@ -22,7 +21,7 @@ public class HudEditScreenMixin {
 		client.inGameHud.setOverlayMessage(Text.of(OverlayMessage.EDIT_SAMPLE_MESSAGE), false);
 		((InGameHudAccessor) client.inGameHud).setHeldItemTooltipFade(40);
 		ItemStack fakeHeldItem = new ItemStack(Items.OAK_PLANKS, 1);
-		fakeHeldItem.set(DataComponentTypes.CUSTOM_NAME, HeldItemTooltip.EDIT_SAMPLE_MESSAGE);
+		fakeHeldItem.setCustomName(HeldItemTooltip.EDIT_SAMPLE_MESSAGE);
 		((InGameHudAccessor) client.inGameHud).setCurrentStack(fakeHeldItem);
 	}
 
